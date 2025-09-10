@@ -1,6 +1,10 @@
 const express = require('express');
-const { sendOtpService, verifyOtpService } = require('../services/authService');
 const router = express.Router();
+
+// --- FIX: Import each function from its own file ---
+const { sendOtpService } = require('../services/sendOtpService');
+const { verifyOtpService } = require('../services/verifyOtpService');
+const { createProfileService } = require('../services/createProfileService');
 
 // === POST /api/auth/send-otp ===
 router.post('/send-otp', async (req, res) => {
@@ -10,11 +14,7 @@ router.post('/send-otp', async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error("Error in /send-otp route:", error.message);
-    res.status(400).json({
-      success: false,
-      message: error.message,
-      error: error.message,
-    });
+    res.status(400).json({ success: false, message: error.message, error: error.message });
   }
 });
 
@@ -26,11 +26,19 @@ router.post('/verify-otp', async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error("Error in /verify-otp route:", error.message);
-    res.status(400).json({
-      success: false,
-      message: error.message,
-      error: error.message,
-    });
+    res.status(400).json({ success: false, message: error.message, error: error.message });
+  }
+});
+
+// === POST /api/auth/create-profile ===
+router.post('/create-profile', async (req, res) => {
+  try {
+    const { phoneNumber, fullName, businessAddress } = req.body;
+    const result = await createProfileService(phoneNumber, { fullName, businessAddress });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in /create-profile route:", error.message);
+    res.status(400).json({ success: false, message: error.message, error: error.message });
   }
 });
 
